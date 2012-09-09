@@ -11,3 +11,6 @@ isPrime = null . divisors
 
 primeFactors :: Integer -> [Integer]
 primeFactors = filter isPrime . divisors
+
+isPalindrome :: String -> Bool
+isPalindrome s = s == reverse s
