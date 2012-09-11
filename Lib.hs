@@ -12,6 +12,7 @@ gcd' x y
 fibs :: [Integer]
 fibs = 1 : 1 : zipWith (+) fibs (tail fibs)
 
+-- | Find divisors of an integer
 divisors :: Integer -> [Integer]
 divisors x = [y | y <- range, x `mod` y == 0]
     where range = [2 .. floor . sqDbl . fromIntegral $ x]
