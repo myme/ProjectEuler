@@ -1,6 +1,10 @@
-evenlyDivisible :: [Int] -> [Int]
-evenlyDivisible xs = filter divAll [1 .. ]
-    where divAll x = all ((== 0) . (x `mod`)) xs
+import Data.List ((\\))
+
+import Lib (factorize)
+
+evenlyDivisible :: [Integer] -> Integer
+evenlyDivisible range = product . foldl foldFn [] $ map factorize range
+    where foldFn xs ys = ys ++ (xs \\ ys)
 
 main :: IO ()
-main = print . head . evenlyDivisible $ [1 .. 10]
+main = print $ evenlyDivisible [1 .. 20]
