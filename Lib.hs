@@ -17,9 +17,15 @@ divisors x = [y | y <- range, x `mod` y == 0]
     where range = [2 .. floor . sqDbl . fromIntegral $ x]
           sqDbl = sqrt :: Double -> Double
 
+-- | Infinite list of primes
+primes :: [Integer]
+primes = 2 : filter isPrime [3 .. ]
+
 -- | Returns true if integer is a prime number.
 isPrime :: Integer -> Bool
-isPrime = null . divisors
+isPrime x = not . any divisible . takeWhile lessThanSqrt $ primes
+    where divisible y = x `mod` y == 0
+          lessThanSqrt y = y <= (floor . sqrt . fromIntegral $ x)
 
 -- | Finds all prime factors of an integer.
 primeFactors :: Integer -> [Integer]
