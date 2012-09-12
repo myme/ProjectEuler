@@ -1,5 +1,11 @@
-data Grid = Grid (Int, Int) [Int]
-          deriving (Show)
+import Data.Maybe (catMaybes)
+
+type Coord = (Int, Int)
+
+data Grid = Grid
+          { gridDimension :: Coord
+          , gridCells :: [Int]
+          } deriving (Show)
 
 input :: String
 input = unlines
@@ -25,10 +31,31 @@ input = unlines
       , "01 70 54 71 83 51 54 69 16 92 33 48 61 43 52 01 89 19 67 48"
       ]
 
+getCell :: Grid -> Coord -> Maybe Int
+getCell g (x, y)
+    | x >= width  || x < 0 = Nothing
+    | y >= height || y < 0 = Nothing
+    | otherwise            = Just $ gridCells g !! (y * width + x)
+    where (width, height) = gridDimension g
+
 mkGrid :: String -> Grid
 mkGrid xs = Grid (x, y) (map read . words $ xs)
     where x = length . words . head . lines $ xs
           y = length . lines $ xs
 
+getProducts :: Grid -> Int -> [Int]
+getProducts g range = do
+    let (width, height) = gridDimension g
+
+    x <- [0 .. width - 1]
+    y <- [0 .. height - 1]
+
+    let right    = mapM (getCell g) [(x + i, y)     | i <- [0 .. range - 1]]
+        down     = mapM (getCell g) [(x, y + i)     | i <- [0 .. range - 1]]
+        diagUp   = mapM (getCell g) [(x + i, y - i) | i <- [0 .. range - 1]]
+        diagDown = mapM (getCell g) [(x + i, y + i) | i <- [0 .. range - 1]]
+
+    map product $ catMaybes [right, down, diagUp, diagDown]
+
 main :: IO ()
-main = print $ mkGrid input
+main = print $ maximum $ getProducts (mkGrid input) 4
